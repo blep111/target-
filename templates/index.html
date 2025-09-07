@@ -20,7 +20,7 @@
     .container {
       max-width: 600px;
       width: 94%;
-      background: rgba(0, 50, 100, 0.9);
+      background: rgba(0, 50, 100, 0.92);
       padding: 38px;
       border-radius: 20px;
       box-shadow: 0 0 40px rgba(0, 180, 255, 0.25),
@@ -47,7 +47,7 @@
 
     input[type=text], input[type=number] {
       width: 100%;
-      padding: 16px;
+      padding: 14px;
       border-radius: 10px;
       border: 1px solid rgba(90, 190, 255, 0.6);
       background: rgba(0, 30, 60, 0.9);
@@ -72,7 +72,7 @@
       border-radius: 10px;
     }
 
-    /* 🔹 Login button (light blue, smaller) */
+    /* 🔹 Login button */
     #login-section button {
       background: linear-gradient(135deg, #5ecbff, #1e90ff);
       padding: 10px;
@@ -85,7 +85,7 @@
       transform: translateY(-2px);
     }
 
-    /* 🔹 Share button (blue theme as well) */
+    /* 🔹 Share button */
     #share-section button {
       background: linear-gradient(135deg, #3dbdff, #0077ff);
       padding: 14px;
@@ -169,57 +169,44 @@
     </div>
   </div>
 
-  <script>
-    function login() {
-      document.getElementById('login-status').innerHTML = '';
-      var cookie = document.getElementById('cookie').value;
-      fetch('/login', {
-        method: 'POST',
-        headers: {'Content-Type':'application/x-www-form-urlencoded'},
-        body: 'cookie=' + encodeURIComponent(cookie)
-      })
-      .then(res => res.json())
-      .then(data => {
+<script>
+function login() {
+    document.getElementById('login-status').innerHTML = '';
+    var cookie = document.getElementById('cookie').value;
+    fetch('/login', {method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: 'cookie=' + encodeURIComponent(cookie)})
+    .then(res => res.json())
+    .then(data => {
         if(data.success) {
-          document.getElementById('login-status').innerHTML = '<span class="success">✅ Login successful!</span>';
-          document.getElementById('login-section').style.display = 'none';
-          document.getElementById('share-section').style.display = '';
+            document.getElementById('login-status').innerHTML = '<span class="success">✅ Login successful!</span>';
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('share-section').style.display = '';
         } else {
-          document.getElementById('login-status').innerHTML = '<span class="error">❌ ' + (data.error || 'Login failed.') + '</span>';
+            document.getElementById('login-status').innerHTML = '<span class="error">❌ ' + (data.error || 'Login failed.') + '</span>';
         }
-      });
-    }
-
-    function share() {
-      document.getElementById('share-status').innerHTML = '';
-      document.getElementById('progress').innerHTML = '';
-      var post_link = document.getElementById('post_link').value;
-      var share_count = document.getElementById('share_count').value;
-      fetch('/share', {
-        method: 'POST',
-        headers: {'Content-Type':'application/x-www-form-urlencoded'},
-        body: 'post_link=' + encodeURIComponent(post_link) + '&share_count=' + encodeURIComponent(share_count)
-      })
-      .then(res => res.json())
-      .then(data => {
+    });
+}
+function share() {
+    document.getElementById('share-status').innerHTML = '';
+    document.getElementById('progress').innerHTML = '';
+    var post_link = document.getElementById('post_link').value;
+    var share_count = document.getElementById('share_count').value;
+    fetch('/share', {method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: 'post_link=' + encodeURIComponent(post_link) + '&share_count=' + encodeURIComponent(share_count)})
+    .then(res => res.json())
+    .then(data => {
         if(data.success) {
-          document.getElementById('share-status').innerHTML = '<span class="success">⏳ Started!</span>';
-          var progress = '';
-          var ok = 0;
-          for(var i=0;i<data.results.length;i++) {
-            if(data.results[i].status=='success') {
-              ok++;
-              progress += '➤ Sharing: ' + data.results[i].n + '<br>';
-            } else {
-              progress += '<span class="error">❌ Error occurred at ' + data.results[i].n + '</span><br>';
+            document.getElementById('share-status').innerHTML = '<span class="success">⏳ Started!</span>';
+            var progress = '';
+            var ok = 0;
+            for(var i=0;i<data.results.length;i++) {
+                if(data.results[i].status=='success') { ok++; progress += '➤ Sharing: ' + data.results[i].n + '<br>'; }
+                else progress += '<span class="error">❌ Error occurred at ' + data.results[i].n + '</span><br>';
             }
-          }
-          document.getElementById('progress').innerHTML = progress + '<br><span class="success">✅ Done sharing ' + ok + '/' + share_count + ' posts in ' + data.elapsed + '</span>';
+            document.getElementById('progress').innerHTML = progress + '<br><span class="success">✅ Done sharing ' + ok + '/' + share_count + ' posts in ' + data.elapsed + '</span>';
         } else {
-          document.getElementById('share-status').innerHTML = '<span class="error">❌ ' + (data.error || 'Share failed.') + '</span>';
+            document.getElementById('share-status').innerHTML = '<span class="error">❌ ' + (data.error || 'Share failed.') + '</span>';
         }
-      });
-    }
-  </script>
+    });
+}
+</script>
 </body>
 </html>
